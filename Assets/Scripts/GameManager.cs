@@ -15,6 +15,9 @@ public class GameManager : MonoBehaviour
 	GameObject cardPrefab;
 
 	[SerializeField]
+	GameObject deckButton;
+
+	[SerializeField]
 	public GameObject[] topSlotPositions;
 
 	[SerializeField]
@@ -62,9 +65,20 @@ public class GameManager : MonoBehaviour
 		Queen,
 		King
 	}
-	#endregion
 
+	[HideInInspector]
+	public List<string> displayedTriplets = new List<string>();
+	[HideInInspector]
+	public List<List<string>> deckTriplets = new List<List<string>>();
+	[HideInInspector]
 	public List<string> cardDeck = new List<string>();
+	[HideInInspector]
+	public List<string> discardPile = new List<string>();
+
+	private int currentDeckIndex;
+	private int tripletsCount;
+	private int tripletsRemainder;
+	#endregion
 
 	private void Start()
 	{
@@ -75,6 +89,7 @@ public class GameManager : MonoBehaviour
 		ShuffleDeck();
 		SortCards();
 		DealCards();
+		SortDeckTriplets();
 	}
 
     private List<string> CreateDeck()
@@ -118,23 +133,23 @@ public class GameManager : MonoBehaviour
 				GameObject newCard = Instantiate(cardPrefab, new Vector3(bottomSlotPositions[i].transform.position.x, bottomSlotPositions[i].transform.position.y - yOffset, bottomSlotPositions[i].transform.position.z - zOffset), Quaternion.identity, bottomSlotPositions[i].transform);
 				newCard.name = card;
 
-				//add card face
-				foreach (Sprite cardFace in cardSprites)
-				{
-					if (cardFace.name == card)
-					{
-						newCard.GetComponent<UpdateSprite>().cardFace = cardFace;
-						break;
-					}
-				}
+				AddCardFaceSprite(newCard);
 
 				if (card == bottomCards[i][bottomCards[i].Count - 1])
 					newCard.GetComponent<UpdateSprite>().FaceUp();
 
 				yOffset += 0.5f;
 				zOffset += 0.03f;
+				discardPile.Add(card);
 			}
 		}
+
+		foreach (string card in discardPile)
+		{
+			if (cardDeck.Contains(card))
+				cardDeck.Remove(card);
+		}
+		discardPile.Clear();
 	}
 
 	private void SortCards()
@@ -155,6 +170,102 @@ public class GameManager : MonoBehaviour
 		foreach (string card in cardDeck)
 		{
 			print(card);
+		}
+	}
+
+	public void SortDeckTriplets()
+	{
+		tripletsCount = cardDeck.Count / 3;
+		tripletsRemainder = cardDeck.Count % 3;
+		deckTriplets.Clear();
+
+		int modifier = 0;
+		for(int i = 0; i < tripletsCount; i++)
+		{
+			List<string> tripletSets = new List<string>();
+			for (int j = 0; j < 3; j++)
+			{
+				tripletSets.Add(cardDeck[j + modifier]);
+			}
+
+			deckTriplets.Add(tripletSets);
+			modifier += 3;
+		}
+
+		if (tripletsRemainder != 0)
+		{
+			List<string> tripletRemainders = new List<string>();
+			modifier = 0;
+			for (int i = 0; i < tripletsRemainder; i++)
+			{
+				tripletRemainders.Add(cardDeck[cardDeck.Count - tripletsRemainder + modifier]);
+				modifier++;
+			}
+
+			deckTriplets.Add(tripletRemainders);
+			tripletsCount++;
+		}
+
+		currentDeckIndex = 0;
+	}
+
+	public void DealDeckTriplets()
+	{
+		foreach (Transform child in deckButton.transform)
+		{
+			if (child.CompareTag("Card"))
+			{
+				cardDeck.Remove(child.name);
+				discardPile.Add(child.name);
+				Destroy(child.gameObject);
+			}
+		}
+
+		if (currentDeckIndex < tripletsCount)
+		{
+			displayedTriplets.Clear();
+			float xOffset = 2.0f;
+			float zOffset = -0.2f;
+
+			foreach (string card in deckTriplets[currentDeckIndex])
+			{
+				GameObject newTopCard = Instantiate(cardPrefab, new Vector3(deckButton.transform.position.x + xOffset, deckButton.transform.position.y, deckButton.transform.position.z + zOffset), Quaternion.identity, deckButton.transform);
+				xOffset += 0.5f;
+				zOffset -= 0.2f;
+				newTopCard.name = card;
+				AddCardFaceSprite(newTopCard);
+				displayedTriplets.Add(card);
+				newTopCard.GetComponent<UpdateSprite>().FaceUp();
+			}
+
+			currentDeckIndex++;
+		}
+		else
+		{
+			// restack the deck
+			RestackDeck();
+		}
+	}
+
+	private void RestackDeck()
+	{
+		foreach (string card in discardPile)
+		{
+			cardDeck.Add(card);
+		}
+		discardPile.Clear();
+		SortDeckTriplets();
+	}
+
+	private void AddCardFaceSprite(GameObject card)
+	{
+		foreach (Sprite cardFace in cardSprites)
+		{
+			if (cardFace.name == card.name)
+			{
+				card.GetComponent<UpdateSprite>().cardFace = cardFace;
+				break;
+			}
 		}
 	}
 }
