@@ -10,20 +10,41 @@ public class UpdateSprite : MonoBehaviour
     [SerializeField]
     public Sprite cardBack;
 
-    private SpriteRenderer _spriteRenderer;
+    [HideInInspector]
+    public bool bIsFaceUp;
+
+    private bool bIsSelected = false;
+    private SpriteRenderer spriteRenderer;
 
 	private void Awake()
 	{
-        _spriteRenderer = this.GetComponent<SpriteRenderer>();
+        spriteRenderer = this.GetComponent<SpriteRenderer>();
+        bIsFaceUp = false;
 	}
 
     public void FaceUp()
 	{
-        _spriteRenderer.sprite = cardFace;
+        spriteRenderer.sprite = cardFace;
+        bIsFaceUp = true;
 	}
 
     public void FaceDown()
 	{
-        _spriteRenderer.sprite = cardBack;
+        spriteRenderer.sprite = cardBack;
+        bIsFaceUp = false;
+	}
+
+    public void ToggleSelection()
+	{
+        if (bIsSelected)
+		{
+            bIsSelected = false;
+            spriteRenderer.color = Color.white;
+		}
+		else
+		{
+            bIsSelected = true;
+            spriteRenderer.color = Color.green;
+		}
 	}
 }

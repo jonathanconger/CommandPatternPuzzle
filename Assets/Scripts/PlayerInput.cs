@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
+	[HideInInspector]
+	public GameObject previousSelection;
+
 	private GameManager gameManager;
 
 	private void Start()
 	{
 		gameManager = GetComponent<GameManager>();
+		previousSelection = this.gameObject;
 	}
 
 	private void Update()
@@ -31,7 +35,7 @@ public class PlayerInput : MonoBehaviour
 						DeckClick();
 						break;
 					case "Card":
-						CardClick();
+						CardClick(hit.collider.gameObject);
 						break;
 					case "TopSlot":
 						TopSlotClick();
@@ -52,9 +56,34 @@ public class PlayerInput : MonoBehaviour
 		gameManager.DealDeckTriplets();
 	}
 
-	private void CardClick()
+	private void CardClick(GameObject selectedObject)
 	{
 		print("Card clicked.");
+
+		if (previousSelection == this.gameObject)
+		{
+			previousSelection = selectedObject;
+			previousSelection.GetComponent<UpdateSprite>().ToggleSelection();
+		}
+		else if (previousSelection != selectedObject)
+		{
+			bool bIsStackable = IsStackable(selectedObject);
+			print("Stackable: " + bIsStackable);
+
+			//if (IsStackable(selectedObject))
+			if (bIsStackable)
+			{
+				// stack cards
+			}
+			else
+			{
+				// select new card
+				previousSelection.GetComponent<UpdateSprite>().ToggleSelection();
+				previousSelection = selectedObject;
+				selectedObject.GetComponent<UpdateSprite>().ToggleSelection();
+			}
+
+		}
 	}
 	
 	private void TopSlotClick()
@@ -65,5 +94,43 @@ public class PlayerInput : MonoBehaviour
 	private void BottomSlotClick()
 	{
 		print("Bottom slot clicked.");
+	}
+
+	private bool IsStackable(GameObject selectedObject)
+	{
+		Card previous = previousSelection.GetComponent<Card>();
+		Card current = selectedObject.GetComponent<Card>();
+
+		// stacking in the top pile
+		if (current.bIsOnTop)
+		{
+			if (previous.suit == current.suit || (previous.value == 1 && current.suit == null))
+			{
+				if (previous.value == current.value + 1)
+					return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			bool bCardOneRed = true;
+			bool bCardTwoRed = true;
+
+			if (previous.suit == "Clubs" || previous.suit == "Spades")
+				bCardOneRed = false;
+			if (current.suit == "Clubs" || current.suit == "Spaces")
+				bCardTwoRed = false;
+
+			if (bCardOneRed == bCardTwoRed)
+				return false;
+			else
+				return true;
+		}
+
+		// stacking in the bottom pile
+		return false;
 	}
 }

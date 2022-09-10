@@ -275,6 +275,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardFace: {fileID: 0}
   cardBack: {fileID: 21300000, guid: a20f2e9fa989e2b4783a88914bf8560f, type: 3}
+  bIsFaceUp: 0
 --- !u!61 &495425603
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -322,6 +323,22 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &495425607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495425599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f83dfea91c3a0bf448011d5988d0230b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bIsOnTop: 0
+  suit: 
+  value: 0
+  bIsInDeck: 0
 --- !u!1 &513023624
 GameObject:
   m_ObjectHideFlags: 0
@@ -1925,6 +1942,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 166c529e052c08a48b1f689695b7bbab, type: 3}
   - {fileID: 21300000, guid: 1af6a091a7135b64c9b81029a8d61813, type: 3}
   cardPrefab: {fileID: 495425599}
+  deckButton: {fileID: 1706689779}
   topSlotPositions:
   - {fileID: 1376435055}
   - {fileID: 1707096712}
@@ -1938,7 +1956,9 @@ MonoBehaviour:
   - {fileID: 1247624977}
   - {fileID: 1798964265}
   - {fileID: 513023624}
+  displayedTriplets: []
   cardDeck: []
+  discardPile: []
 --- !u!4 &1943870612
 Transform:
   m_ObjectHideFlags: 0
@@ -1966,6 +1986,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db6b3e06a79398f4a97a3f13a64695e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  previousSelection: {fileID: 0}
 --- !u!1 &1994044791
 GameObject:
   m_ObjectHideFlags: 0

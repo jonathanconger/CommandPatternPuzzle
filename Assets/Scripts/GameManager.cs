@@ -132,6 +132,7 @@ public class GameManager : MonoBehaviour
 			{
 				GameObject newCard = Instantiate(cardPrefab, new Vector3(bottomSlotPositions[i].transform.position.x, bottomSlotPositions[i].transform.position.y - yOffset, bottomSlotPositions[i].transform.position.z - zOffset), Quaternion.identity, bottomSlotPositions[i].transform);
 				newCard.name = card;
+				newCard.GetComponent<Card>().row = i;
 
 				AddCardFaceSprite(newCard);
 
@@ -236,6 +237,7 @@ public class GameManager : MonoBehaviour
 				AddCardFaceSprite(newTopCard);
 				displayedTriplets.Add(card);
 				newTopCard.GetComponent<UpdateSprite>().FaceUp();
+				newTopCard.GetComponent<Card>().bIsInDeck = true;
 			}
 
 			currentDeckIndex++;
