@@ -4,15 +4,26 @@ using UnityEngine;
 
 public class UpdateSprite : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    public Sprite cardFace;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [SerializeField]
+    public Sprite cardBack;
+
+    private SpriteRenderer _spriteRenderer;
+
+	private void Awake()
+	{
+        _spriteRenderer = this.GetComponent<SpriteRenderer>();
+	}
+
+    public void FaceUp()
+	{
+        _spriteRenderer.sprite = cardFace;
+	}
+
+    public void FaceDown()
+	{
+        _spriteRenderer.sprite = cardBack;
+	}
 }
