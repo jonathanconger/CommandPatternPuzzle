@@ -251,6 +251,7 @@ public class GameManager : MonoBehaviour
 
 	private void RestackDeck()
 	{
+		cardDeck.Clear();
 		foreach (string card in discardPile)
 		{
 			cardDeck.Add(card);

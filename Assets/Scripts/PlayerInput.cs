@@ -200,18 +200,21 @@ public class PlayerInput : MonoBehaviour
 			// stacking on the bottom pile
 			else
 			{
-				bool bCardOneRed = true;
-				bool bCardTwoRed = true;
+				if (previous.value == current.value - 1)
+				{
+					bool bCardOneRed = true;
+					bool bCardTwoRed = true;
 
-				if (previous.suit == "Clubs" || previous.suit == "Spades")
-					bCardOneRed = false;
-				if (current.suit == "Clubs" || current.suit == "Spaces")
-					bCardTwoRed = false;
+					if (previous.suit == "Clubs" || previous.suit == "Spades")
+						bCardOneRed = false;
+					if (current.suit == "Clubs" || current.suit == "Spaces")
+						bCardTwoRed = false;
 
-				if (bCardOneRed == bCardTwoRed)
-					return false;
-				else
-					return true;
+					if (bCardOneRed == bCardTwoRed)
+						return false;
+					else
+						return true;
+				}			
 			}
 		}
 
