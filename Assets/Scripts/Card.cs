@@ -4,24 +4,19 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-	[HideInInspector]
-	public bool bIsOnTop = false;
-	[HideInInspector]
 	public int row;
+	public string suit;
+	public int value;
+	public bool bIsOnTop = false;
+
 	[HideInInspector]
 	public bool bIsInDeck;
-	[HideInInspector]
-	public string suit;
-	[HideInInspector]
-	public int value;
-
-	private string valueString;
 
 	private void Start()
 	{
 		if (CompareTag("Card"))
 		{
-			int underscoreIndex = transform.name.IndexOf("_") - 1;
+			int underscoreIndex = transform.name.IndexOf("_");
 			SetCardSuit(transform.name.Substring(0, underscoreIndex));
 			SetCardValue(transform.name.Substring(underscoreIndex + 1));
 		}
